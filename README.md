@@ -1,119 +1,98 @@
-🛒 Retail Sales Forecasting & Demand Planning
+# Retail Sales Forecasting & Demand Planning
 
-📌 Overview
-A end-to-end data analytics project that ingests, cleans, and models 3 years of transactional retail sales data to forecast monthly demand by product category. The project combines Python-based data engineering, statistical forecasting, SQL data warehousing, and interactive Power BI visualization to support inventory and restocking decisions.
+A machine learning and statistical forecasting system for predicting monthly retail sales by product category, backed by a SQL data warehouse and an interactive Power BI dashboard for demand planning and inventory optimization.
 
-🛠️ Tech Stack
-LayerToolsData Cleaning & EDAPython, Pandas, NumPyForecasting ModelsStatsmodels (ARIMA, Exponential Smoothing)Data WarehousingSQL (Star Schema, ETL Pipeline)VisualizationPower BIEnvironmentJupyter Notebook
+## Description
 
-📂 Project Structure
-retail-sales-forecasting/
-│
-├── data/
-│   ├── raw/                  # Original transactional sales data
-│   └── processed/            # Cleaned and transformed datasets
-│
-├── notebooks/
-│   ├── 01_data_cleaning.ipynb
-│   ├── 02_eda.ipynb
-│   └── 03_forecasting_models.ipynb
-│
-├── sql/
-│   ├── schema.sql            # Star schema DDL (fact & dimension tables)
-│   ├── etl_pipeline.sql      # ETL transformation queries
-│   └── queries.sql           # Reporting and aggregation queries
-│
-├── src/
-│   ├── data_cleaning.py      # Reusable cleaning functions
-│   ├── forecasting.py        # ARIMA & Exponential Smoothing logic
-│   └── etl.py                # ETL pipeline scripts
-│
-├── powerbi/
-│   └── dashboard.pbix        # Power BI dashboard file
-│
-├── reports/
-│   └── dashboard_preview.png # Dashboard screenshot
-│
-├── requirements.txt
-├── .gitignore
-└── README.md
+This end-to-end data analytics project simulates a real-world retail forecasting pipeline. It ingests and cleans 3 years of transactional sales data (50,000+ records) sourced from the UCI Machine Learning Repository, applies time series forecasting models (ARIMA and Exponential Smoothing), and delivers insights through a structured SQL data warehouse and a Power BI dashboard. The project achieves 91% forecast accuracy (MAPE) and supports data-driven restocking decisions — reducing simulated stockout rates by 18%.
 
-🔍 Project Highlights
-🧹 Data Cleaning & Preprocessing
+## Getting Started
 
-Ingested 3 years of raw transactional sales data (50,000+ records)
-Resolved missing values, duplicate entries, and schema inconsistencies using Pandas and NumPy
-Standardized data types, column naming conventions, and date formats for downstream processing
+### Dependencies
 
-📈 Forecasting Models
+* Python 3.9 or higher
+* Jupyter Notebook or JupyterLab
+* SQL environment — PostgreSQL, MySQL, or SQLite
+* Microsoft Power BI Desktop (Windows)
+* Required Python libraries (see Installing section)
+* OS: Windows 10/11 or macOS 12+
 
-Built and compared two forecasting approaches using Statsmodels:
+### Installing
 
-ARIMA — for capturing trend and autocorrelation patterns
-Exponential Smoothing — for handling seasonality and level shifts
-
-
-Achieved 91% forecast accuracy measured by MAPE (Mean Absolute Percentage Error)
-Forecasted monthly sales across multiple product categories
-
-🗄️ SQL ETL Pipeline & Data Warehouse
-
-Designed a star schema data warehouse with clearly separated fact and dimension tables
-Built an end-to-end SQL ETL pipeline to load cleaned Python output into structured warehouse tables
-Optimized schema for reporting efficiency and BI tool compatibility
-
-📊 Power BI Dashboard
-
-Developed an interactive dashboard featuring:
-
-Dynamic KPIs (revenue, units sold, forecast vs. actual)
-Seasonal trend lines by product category
-Inventory risk flags for low-stock alerts
-
-
-Enabled data-driven restocking decisions, reducing the simulated stockout rate by 18%
-
-
-🚀 Getting Started
-Prerequisites
-
-Python 3.8+
-Jupyter Notebook
-Power BI Desktop (to view .pbix file)
-A SQL engine (PostgreSQL, MySQL, or SQLite)
-
-Installation
-bash# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/retail-sales-forecasting.git
-
-# 2. Navigate into the project directory
+1. Clone the repository:
+git clone https://github.com/bijal04/retail-sales-forecasting.git
+cd retail-sales-forecasting
 cd retail-sales-forecasting
 
-# 3. Install required Python libraries
+2. Create and activate a virtual environment (recommended):
+python -m venv venv
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
+
+3. Install all required Python dependencies:
 pip install -r requirements.txt
 
-# 4. Launch Jupyter and run notebooks in order
-jupyter notebook
-Run Notebooks in Order
-01_data_cleaning.ipynb   →   02_eda.ipynb   →   03_forecasting_models.ipynb
+4. Download the dataset from the UCI Machine Learning Repository:
+   Visit: http://archive.ics.uci.edu/dataset/502/online+retail+ii
+   Download the Excel file and place it in the `data/raw/` folder as `online_retail.xlsx`
 
-📷 Dashboard Preview
+5. Set up the SQL database by running the schema script:
+psql -U your_username -d your_database -f sql/schema.sql
 
-Power BI dashboard showing KPIs, seasonal trends, and inventory risk flags
+6. Open Power BI Desktop and load `powerbi/dashboard.pbix` to explore the dashboard.
 
-"------------------Show Image"
+### Executing Program
 
-📊 Results Summary
-MetricResultRecords Processed50,000+Forecast Accuracy (MAPE)91%Stockout Rate Reduction18%Forecasting Models UsedARIMA, Exponential SmoothingData Warehouse SchemaStar Schema
+Run the notebooks in the following order for the full pipeline:
 
-🤝 Contributing
-Contributions, issues, and feature requests are welcome. Feel free to open an issue or submit a pull request.
+**Step 1 — Data Cleaning & Preprocessing**
+jupyter notebook notebooks/01_data_cleaning.ipynb
 
-📄 License
-This project is licensed under the MIT License — see the LICENSE file for details.
+**Step 2 — Exploratory Data Analysis**
+jupyter notebook notebooks/02_eda.ipynb
 
-👤 Author
-Your Name
+**Step 3 — Forecasting Models (ARIMA & Exponential Smoothing)**
+jupyter notebook notebooks/03_forecasting_models.ipynb
 
-GitHub: @Bijal04
-LinkedIn: linkedin.com/in/bijal-panchal
+**Step 4 — Load processed data into SQL warehouse**
+python src/etl.py
+
+**Step 5 — Open the Power BI dashboard**
+* Launch Power BI Desktop
+* Open `powerbi/dashboard.pbix`
+* Refresh data source connection if prompted
+
+## Help
+
+**Common Issues:**
+
+If `statsmodels` throws a convergence warning during ARIMA fitting:
+model = ARIMA(data, order=(p,d,q)).fit(method_kwargs={"warn_convergence": False})
+
+If Power BI cannot find the data source, update the file path under:
+Home → Transform Data → Data Source Settings
+
+If dependencies fail to install:
+pip install --upgrade pip
+pip install -r requirements.txt
+
+If the UCI dataset file throws a format error on load:
+df = pd.read_excel('data/raw/online_retail.xlsx', engine='openpyxl')
+
+## Authors
+
+* LinkedIn: www.linkedin.com/in/bijal-panchal
+* GitHub: @bijal04
+
+## Version History
+
+* 0.2
+    * Added Exponential Smoothing model and MAPE comparison
+    * Power BI dashboard with inventory risk flags
+    * See [release history]()
+* 0.1
+    * Initial release: data cleaning pipeline, ARIMA model, SQL star schema ETL
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
