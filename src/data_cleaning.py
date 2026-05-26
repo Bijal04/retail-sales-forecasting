@@ -78,3 +78,54 @@ def fill_descriptions(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def remove_noise_codes(df: pd.DataFrame) -> pd.DataFrame:
+    before = len(df)
+    df = df[~df["StockCode"].isin(NOISE_CODES)]
+    df = df[df["StockCode"].str.len() >= 4]
+    print(f"  Noise codes removed: {before - len(df):,}")
+    return df
+
+def add_features(df: pd.DataFrame) -> pd.DataFrame:
+    df["HasCustomerID"]   = df["CustomerID"].notna()
+    df["TotalRevenue"]    = (df["Quantity"] * df["Price"]).round(2)
+    df["Year"]            = df["InvoiceDate"].dt.year
+    df["Month"]           = df["InvoiceDate"].dt.month
+    df["YearMonth"]       = df["InvoiceDate"].dt.to_period("M").astype(str)
+    df["DayOfWeek"]       = df["InvoiceDate"].dt.dayofweek
+    df["DayOfWeekName"]   = df["InvoiceDate"].dt.day_name()
+    df["Hour"]            = df["InvoiceDate"].dt.hour
+    df["Quarter"]         = df["InvoiceDate"].dt.quarter
+    df["WeekOfYear"]      = df["InvoiceDate"].dt.isocalendar().week.astype(int)
+    return df
+
+def save_outputs(df_sales: pd.DataFrame, out_dir: str) -> None:
+    os.makedirs(out_dir, exist_ok=True)
+
+    df_sales.to_csv(f"{out_dir}/cleaned_sales.csv", index=False)
+
+    monthly = (
+        df_sales.groupby("YearMonth")
+        .agg(
+            TotalRevenue  = ("TotalRevenue", "sum"),
+            TotalQuantity = ("Quantity",     "sum"),
+            NumInvoices   = ("Invoice",      "nunique"),
+            NumCustomers  = ("CustomerID",   "nunique"),
+            NumProducts   = ("StockCode",    "nunique"),
+        )
+        .reset_index()
+        .sort_values("YearMonth")
+    )
+    monthly.to_csv(f"{out_dir}/monthly_sales.csv", index=False)
+
+    monthly_cat = (
+        df_sales.groupby(["YearMonth", "StockCode", "Description"])
+        .agg(Revenue=("TotalRevenue", "sum"), Qty=("Quantity", "sum"))
+        .reset_index()
+        .sort_values(["StockCode", "YearMonth"])
+    )
+    monthly_cat.to_csv(f"{out_dir}/monthly_by_product.csv", index=False)
+
+    print(f"\nSaved to {out_dir}/:")
+    print(f"  cleaned_sales.csv       — {len(df_sales):,} rows")
+    print(f"  monthly_sales.csv       — {len(monthly)} months")
+    print(f"  monthly_by_product.csv  — {len(monthly_cat):,} rows")
