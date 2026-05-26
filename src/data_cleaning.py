@@ -129,3 +129,39 @@ def save_outputs(df_sales: pd.DataFrame, out_dir: str) -> None:
     print(f"  cleaned_sales.csv       — {len(df_sales):,} rows")
     print(f"  monthly_sales.csv       — {len(monthly)} months")
     print(f"  monthly_by_product.csv  — {len(monthly_cat):,} rows")
+
+
+def print_summary(df: pd.DataFrame) -> None:
+    print("\n=== FINAL SUMMARY ===")
+    print(f"Rows       : {len(df):,}")
+    print(f"Date range : {df['InvoiceDate'].min().date()} → {df['InvoiceDate'].max().date()}")
+    print(f"Customers  : {df['CustomerID'].nunique():,}")
+    print(f"Products   : {df['StockCode'].nunique():,}")
+    print(f"Countries  : {df['Country'].nunique()}")
+    print(f"Revenue    : £{df['TotalRevenue'].sum():,.2f}")
+    nulls = df.isnull().sum()
+    if nulls.any():
+        print("\nRemaining nulls:")
+        print(nulls[nulls > 0])
+
+
+def main():
+    print("=== DATA CLEANING PIPELINE ===\n")
+
+    df = load_and_merge(RAW_PATH)
+    df = fix_dtypes(df)
+    df = remove_duplicates(df)
+    df, _ = flag_cancellations(df)
+    df = remove_invalid_values(df)
+    df = fill_descriptions(df)
+    df = remove_noise_codes(df)
+    df = add_features(df)
+
+    print_summary(df)
+    save_outputs(df, PROCESSED_DIR)
+
+    print("\n✓ Done. Next: notebooks/02_eda.ipynb")
+
+
+if __name__ == "__main__":
+    main()
