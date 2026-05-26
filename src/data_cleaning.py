@@ -29,3 +29,16 @@ def load_and_merge(path: str) -> pd.DataFrame:
     print(f"  Merged: {len(df):,} rows  |  {df.shape[1]} columns")
     return df
 
+def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
+    df.columns = [
+        "Invoice", "StockCode", "Description", "Quantity",
+        "InvoiceDate", "Price", "CustomerID", "Country"
+    ]
+    df["Invoice"]     = df["Invoice"].astype(str).str.strip()
+    df["StockCode"]   = df["StockCode"].astype(str).str.strip().str.upper()
+    df["Description"] = df["Description"].astype(str).str.strip().str.title()
+    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+    df["CustomerID"]  = df["CustomerID"].astype("Int64")
+    df["Country"]     = df["Country"].astype(str).str.strip()
+    return df
+
