@@ -29,6 +29,7 @@ def load_and_merge(path: str) -> pd.DataFrame:
     print(f"  Merged: {len(df):,} rows  |  {df.shape[1]} columns")
     return df
 
+
 def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = [
         "Invoice", "StockCode", "Description", "Quantity",
@@ -42,11 +43,13 @@ def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     df["Country"]     = df["Country"].astype(str).str.strip()
     return df
 
+
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
     before = len(df)
     df = df.drop_duplicates()
     print(f"  Duplicates removed: {before - len(df):,}")
     return df
+
 
 def flag_cancellations(df: pd.DataFrame):
     df["IsCancelled"] = df["Invoice"].str.startswith("C")
@@ -54,3 +57,24 @@ def flag_cancellations(df: pd.DataFrame):
     df_sales     = df[~df["IsCancelled"]].copy()
     print(f"  Cancellations: {len(df_cancelled):,}  |  Valid sales: {len(df_sales):,}")
     return df_sales, df_cancelled
+
+
+def remove_invalid_values(df: pd.DataFrame) -> pd.DataFrame:
+    before = len(df)
+    df = df[(df["Quantity"] > 0) & (df["Price"] > 0)]
+    print(f"  Invalid Qty/Price removed: {before - len(df):,}")
+    return df
+
+
+def fill_descriptions(df: pd.DataFrame) -> pd.DataFrame:
+    desc_map = (
+        df[df["Description"].notna()]
+        .groupby("StockCode")["Description"]
+        .agg(lambda x: x.mode()[0] if len(x) > 0 else "Unknown")
+    )
+    mask = df["Description"].isna() | (df["Description"] == "Nan")
+    df.loc[mask, "Description"] = df.loc[mask, "StockCode"].map(desc_map)
+    df["Description"] = df["Description"].fillna("Unknown")
+    return df
+
+
