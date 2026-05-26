@@ -42,3 +42,15 @@ def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     df["Country"]     = df["Country"].astype(str).str.strip()
     return df
 
+def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
+    before = len(df)
+    df = df.drop_duplicates()
+    print(f"  Duplicates removed: {before - len(df):,}")
+    return df
+
+def flag_cancellations(df: pd.DataFrame):
+    df["IsCancelled"] = df["Invoice"].str.startswith("C")
+    df_cancelled = df[df["IsCancelled"]].copy()
+    df_sales     = df[~df["IsCancelled"]].copy()
+    print(f"  Cancellations: {len(df_cancelled):,}  |  Valid sales: {len(df_sales):,}")
+    return df_sales, df_cancelled
