@@ -160,7 +160,7 @@ def main():
     print_summary(df)
     save_outputs(df, PROCESSED_DIR)
 
-    print("\n✓ Done. Next: notebooks/02_eda.ipynb")
+    print("\n✓ Done.")
 
 
 if __name__ == "__main__":
