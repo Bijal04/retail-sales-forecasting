@@ -7,6 +7,7 @@
 --   3. queries.sql  (reporting)
 --
 -- Replace '<path>' with absolute path to your processed/ folder
+-- e.g. /home/user/retail-sales-forecasting/data/processed/
 -- ============================================================
 
 
@@ -14,12 +15,12 @@
 -- STEP 1 — LOAD dim_country
 -- ══════════════════════════════════════════════════════════════
 
-Load distinct countries from cleaned CSV
-In PostgreSQL use \COPY; in SQLite use .import
+-- Load distinct countries from cleaned CSV
+-- In PostgreSQL use \COPY; in SQLite use .import
 
---PostgreSQL:
-
-/*\COPY (
+-- PostgreSQL:
+/*
+\COPY (
   SELECT DISTINCT
     country,
     CASE
@@ -37,7 +38,7 @@ In PostgreSQL use \COPY; in SQLite use .import
 ) TO '/tmp/countries.csv' CSV HEADER;
 */
 
---Manual insert (works for SQLite and any DB)
+-- Manual insert (works for SQLite and any DB)
 INSERT INTO dim_country (country_name, region) VALUES
   ('United Kingdom',    'Europe'),
   ('EIRE',              'Europe'),
@@ -232,13 +233,13 @@ JOIN  dim_date     d  ON d.date_key       = CAST(TO_CHAR(s.invoice_date, 'YYYYMM
 -- STEP 7 — LOAD FORECAST RESULTS  (run after notebooks/03)
 -- ══════════════════════════════════════════════════════════════
 
-\COPY forecast_results (year_month, forecast_revenue, lower_80ci, upper_80ci, model_used)
-FROM '<path>/revenue_forecast.csv' CSV HEADER;
+-- \COPY forecast_results (year_month, forecast_revenue, lower_80ci, upper_80ci, model_used)
+-- FROM '<path>/revenue_forecast.csv' CSV HEADER;
 
 
 -- ══════════════════════════════════════════════════════════════
 -- STEP 8 — BUILD INVENTORY RISK TABLE
--- ════════════════════════════════════════════════
+-- ══════════════════════════════════════════════════════════════
 
 INSERT INTO inventory_risk (stock_code, description, avg_monthly_qty, forecast_qty,
                              stockout_flag, risk_level)
@@ -267,7 +268,9 @@ GROUP BY p.product_key, p.stock_code, p.description
 ON CONFLICT DO NOTHING;
 
 
+-- ══════════════════════════════════════════════════════════════
 -- VALIDATION — row count check after load
+-- ══════════════════════════════════════════════════════════════
 
 SELECT 'staging_sales'   AS tbl, COUNT(*) AS rows FROM staging_sales   UNION ALL
 SELECT 'fact_sales',              COUNT(*)         FROM fact_sales       UNION ALL

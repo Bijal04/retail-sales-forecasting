@@ -117,4 +117,4 @@ CREATE TABLE inventory_risk (
 -- ── Quick schema summary ─────────────────────────────────────
 SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public'
-ORDER BY table_name;
+ORDER BY table_name
