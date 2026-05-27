@@ -17,7 +17,8 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.stattools import adfuller
 
 try:
-    from pmdarima import auto_arima
+    # pmdarima is optional; static analyzers may not resolve it in some envs
+    from pmdarima import auto_arima  # type: ignore
     HAS_PMDARIMA = True
 except ImportError:
     HAS_PMDARIMA = False
