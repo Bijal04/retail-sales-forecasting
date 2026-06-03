@@ -4,7 +4,7 @@ A machine learning and statistical forecasting system for predicting monthly ret
 
 ## Description
 
-This end-to-end data analytics project simulates a real-world retail forecasting pipeline. It ingests and cleans 3 years of transactional sales data (50,000+ records) sourced from the UCI Machine Learning Repository, applies time series forecasting models (ARIMA and Exponential Smoothing), and delivers insights through a structured SQL data warehouse and a Power BI dashboard. The project achieves 91% forecast accuracy (MAPE) and supports data-driven restocking decisions — reducing simulated stockout rates by 18%.
+This end-to-end data analytics project simulates a real-world retail forecasting pipeline. It ingests and cleans 3 years of transactional sales data (50,000+ records) sourced from the UCI Machine Learning Repository, applies time series forecasting models (ARIMA and Exponential Smoothing), and delivers insights through a structured SQL data warehouse and a Power BI dashboard. The project achieves 74.5% forecast accuracy (MAPE) and supports data-driven restocking decisions — reducing simulated stockout rates by 18%.
 
 ## Getting Started
 
